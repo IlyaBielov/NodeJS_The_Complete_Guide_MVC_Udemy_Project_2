@@ -1,9 +1,10 @@
 {
   "name": "nodejs_the_complete_guide_mvc_udemy_project_2",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,12 @@
     "url": "https://github.com/IlyaBielov/NodeJS_The_Complete_Guide_MVC_Udemy_Project_2/issues"
   },
   "homepage": "https://github.com/IlyaBielov/NodeJS_The_Complete_Guide_MVC_Udemy_Project_2#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
 }
