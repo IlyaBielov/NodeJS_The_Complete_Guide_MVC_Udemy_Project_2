@@ -1,0 +1,19 @@
+{
+  "name": "nodejs_the_complete_guide_mvc_udemy_project_2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IlyaBielov/NodeJS_The_Complete_Guide_MVC_Udemy_Project_2.git"
+  },
+  "author": "IlyaBielov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IlyaBielov/NodeJS_The_Complete_Guide_MVC_Udemy_Project_2/issues"
+  },
+  "homepage": "https://github.com/IlyaBielov/NodeJS_The_Complete_Guide_MVC_Udemy_Project_2#readme",
+  "description": ""
+}
