@@ -10,13 +10,15 @@
 }
 
 .modal__header {
-  border-bottom: 2px solid #3b0062;
+  border-bottom: 2px solid var(--primary-main);
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-main));
 }
 
 .modal__header h1 {
   font-size: 1.5rem;
-  color: #3b0062;
+  color: var(--text-on-primary);
   margin: 1rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .modal__content {
@@ -30,6 +32,36 @@
 
 .modal__actions button {
   margin: 0 0.5rem;
+}
+
+/* Success Modal Styling */
+.modal--success .modal__header {
+  border-bottom: 2px solid var(--success);
+  background: linear-gradient(135deg, #4caf50, var(--success));
+}
+
+.modal--success .modal__header h1 {
+  color: var(--text-on-primary);
+}
+
+.modal--success .modal__content {
+  background: rgba(76, 175, 80, 0.05);
+  color: var(--text-on-light);
+}
+
+/* Error Modal Styling */
+.modal--error .modal__header {
+  border-bottom: 2px solid var(--error);
+  background: linear-gradient(135deg, #f44336, var(--error));
+}
+
+.modal--error .modal__header h1 {
+  color: var(--text-on-primary);
+}
+
+.modal--error .modal__content {
+  background: rgba(244, 67, 54, 0.05);
+  color: var(--text-on-light);
 }
 
 @media (min-width: 768px) {

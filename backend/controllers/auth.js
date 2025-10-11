@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
-const handleError = require("../utils/errorHandler");
+const { handleError } = require("../utils/errorHandler");
 
 exports.signup = (req, res, next) => {
     const errors = validationResult(req);

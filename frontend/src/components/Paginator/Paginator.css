@@ -5,22 +5,28 @@
 
 .paginator__control {
   width: 5rem;
-  padding: 0.25rem 0;
-  margin: 0 1rem;
-  border: 1px solid #3b0062;
+  padding: 0.5rem 0;
+  margin: 0 0.5rem;
+  border: 1px solid var(--primary-main);
   background: transparent;
   font: inherit;
   cursor: pointer;
   font-size: 1rem;
-  color: #3b0062;
+  color: var(--primary-main);
+  border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
 .paginator__control:hover,
 .paginator__control:active {
-  color: #fab83f;
-  border-color: #fab83f;
+  color: var(--text-on-primary);
+  border-color: var(--accent-main);
+  background: var(--accent-main);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .paginator__control:focus {
   outline: none;
+  box-shadow: 0 0 0 2px var(--accent-light);
 }

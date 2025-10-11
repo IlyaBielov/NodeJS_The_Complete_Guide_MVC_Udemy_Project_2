@@ -1,0 +1,31 @@
+/* Global Color Variables - Autumn Brand Colour Palette */
+:root {
+  /* Primary Colors - Autumn Palette: #F2E1C3, #D8B573, #A66F2E, #A63922, #02385A */
+  --primary-dark: #02385A;        /* Deep Navy Blue */
+  --primary-main: #A63922;        /* Rich Autumn Red-Brown */
+  --primary-light: #A66F2E;       /* Warm Golden Brown */
+  --primary-lighter: #D8B573;     /* Light Tan/Gold */
+  
+  /* Accent Colors */
+  --accent-main: #A66F2E;         /* Warm Golden Brown */
+  --accent-dark: #8B5A26;         /* Darker Golden Brown */
+  --accent-light: #D8B573;        /* Light Tan/Gold */
+  
+  /* Secondary Colors */
+  --secondary-yellow: #D8B573;    /* Light Tan */
+  --secondary-amber: #A66F2E;     /* Golden Brown */
+  
+  /* Status Colors */
+  --success: #4caf50;             /* Green for success */
+  --error: #A63922;               /* Autumn Red for errors */
+  --warning: #A66F2E;             /* Golden Brown for warnings */
+  
+  /* Text Colors */
+  --text-on-primary: #F2E1C3;     /* Cream text on primary colors */
+  --text-on-light: #02385A;       /* Deep Navy on light backgrounds */
+  --text-primary: #A63922;        /* Primary text color */
+  
+  /* Background Colors */
+  --bg-light: #F2E1C3;            /* Cream background */
+  --bg-medium: #D8B573;           /* Light tan background */
+}

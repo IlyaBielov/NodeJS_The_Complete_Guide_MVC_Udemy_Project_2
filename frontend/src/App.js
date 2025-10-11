@@ -7,6 +7,7 @@ import Toolbar from './components/Toolbar/Toolbar';
 import MainNavigation from './components/Navigation/MainNavigation/MainNavigation';
 import MobileNavigation from './components/Navigation/MobileNavigation/MobileNavigation';
 import ErrorHandler from './components/ErrorHandler/ErrorHandler';
+import SuccessHandler from './components/SuccessHandler/SuccessHandler';
 import FeedPage from './pages/Feed/Feed';
 import SinglePostPage from './pages/Feed/SinglePost/SinglePost';
 import LoginPage from './pages/Auth/Login';
@@ -21,7 +22,8 @@ class App extends Component {
     token: null,
     userId: null,
     authLoading: false,
-    error: null
+    error: null,
+    success: null
   };
 
   componentDidMount() {
@@ -46,7 +48,7 @@ class App extends Component {
   };
 
   backdropClickHandler = () => {
-    this.setState({ showBackdrop: false, showMobileNav: false, error: null });
+    this.setState({ showBackdrop: false, showMobileNav: false, error: null, success: null });
   };
 
   logoutHandler = () => {
@@ -85,7 +87,8 @@ class App extends Component {
           isAuth: true,
           token: resData.token,
           authLoading: false,
-          userId: resData.userId
+          userId: resData.userId,
+          success: { message: 'Login successful! Welcome back.' }
         });
         localStorage.setItem('token', resData.token);
         localStorage.setItem('userId', resData.userId);
@@ -134,7 +137,11 @@ class App extends Component {
       })
       .then(resData => {
         console.log(resData);
-        this.setState({ isAuth: false, authLoading: false });
+        this.setState({ 
+          isAuth: false, 
+          authLoading: false,
+          success: { message: 'Account created successfully! You can now log in.' }
+        });
         this.props.history.replace('/');
       })
       .catch(err => {
@@ -155,6 +162,10 @@ class App extends Component {
 
   errorHandler = () => {
     this.setState({ error: null });
+  };
+
+  successHandler = () => {
+    this.setState({ success: null });
   };
 
   render() {
@@ -215,6 +226,7 @@ class App extends Component {
           <Backdrop onClick={this.backdropClickHandler} />
         )}
         <ErrorHandler error={this.state.error} onHandle={this.errorHandler} />
+        <SuccessHandler success={this.state.success} onHandle={this.successHandler} />
         <Layout
           header={
             <Toolbar>

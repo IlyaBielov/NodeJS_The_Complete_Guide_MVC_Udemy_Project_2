@@ -4,7 +4,7 @@ const path = require('path');
 const { validationResult } = require('express-validator');
 const Post = require('../models/post');
 const User = require('../models/user');
-const handleError = require('../utils/errorHandler');
+const { handleError } = require('../utils/errorHandler');
 
 exports.getPosts = (req, res, next) => {
     const currentPage = parseInt(req.query.page) || 1;

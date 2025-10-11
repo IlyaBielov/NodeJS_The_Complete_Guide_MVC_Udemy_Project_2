@@ -13,13 +13,13 @@
 }
 
 .navigation-item.mobile a {
-  color: #3b0062;
+  color: var(--primary-main);
 }
 
 .navigation-item a:hover,
 .navigation-item a:active,
 .navigation-item a.active {
-  color: #fab83f;
+  color: var(--accent-light);
 }
 
 .navigation-item:last-of-type {
@@ -37,5 +37,5 @@
 
 .navigation-item button:hover,
 .navigation-item button:active {
-  color: #fab83f;
+  color: var(--accent-light);
 }
