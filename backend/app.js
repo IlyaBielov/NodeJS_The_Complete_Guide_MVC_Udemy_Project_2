@@ -7,6 +7,7 @@ const multer = require('multer');
 
 const feedRouter = require('./routes/feed');
 const authRouter = require('./routes/auth');
+const { errorMiddleware } = require('./utils/errorHandler');
 
 const app = express();
 
@@ -41,12 +42,8 @@ app.use((req, res, next) => {
 app.use('/auth', authRouter);
 app.use('/feed', feedRouter);
 
-app.use((error, req, res, next) => {
-    const status = error.statusCode || 500;
-    const message = error.message;
-    const data = error.data;
-    res.status(status).json({ message: message, data: data });
-})
+// Use the new comprehensive error middleware
+app.use(errorMiddleware);
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
