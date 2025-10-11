@@ -6,13 +6,26 @@ const Post = require('../models/post');
 const handleError = require('../utils/errorHandler');
 
 exports.getPosts = (req, res, next) => {
-    Post.find()
+    const currentPage = parseInt(req.query.page) || 1;
+    const postsPerPage = 2;
+    let totalPosts;
+
+    Post.find().countDocuments()
+        .then(count => {
+            totalPosts = count;
+            return Post.find()
+                .skip((currentPage - 1) * postsPerPage)
+                .limit(postsPerPage);
+        })
         .then(posts => {
             res.status(200).json({
-                posts: posts
+                posts: posts,
+                totalItems: totalPosts
             })
         })
         .catch(err => handleError(err, next))
+
+
 };
 
 exports.getPost = (req, res, next) => {
