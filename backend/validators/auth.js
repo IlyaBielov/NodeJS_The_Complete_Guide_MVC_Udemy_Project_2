@@ -5,13 +5,11 @@ exports.validateSignup = [
     body('email')
         .isEmail()
         .withMessage('Please enter a valid email address')
-        .custom((email) => {
-            return User.findOne({ email })
-                .then(user => {
-                    if (user) {
-                        return Promise.reject('Email already exists');
-                    }
-                });
+        .custom(async (email) => {
+            const user = await User.findOne({ email });
+            if (user) {
+                throw new Error('Email already exists');
+            }
         })
         .normalizeEmail(),
     body('password')

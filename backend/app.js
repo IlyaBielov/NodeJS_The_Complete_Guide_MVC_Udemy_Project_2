@@ -45,14 +45,18 @@ app.use('/feed', feedRouter);
 // Use the new comprehensive error middleware
 app.use(errorMiddleware);
 
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => {
+async function start() {
+    try {
+        await mongoose.connect(process.env.MONGODB_URI);
         console.log('Connected to MongoDB');
         const port = process.env.PORT || 8080;
-
-        
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
         });
-    })
-    .catch(err => console.log(err));
+    } catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+}
+
+start();
