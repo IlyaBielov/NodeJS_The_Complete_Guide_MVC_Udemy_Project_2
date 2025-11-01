@@ -49,9 +49,27 @@ async function start() {
     try {
         await mongoose.connect(process.env.MONGODB_URI);
         console.log('Connected to MongoDB');
+
         const port = process.env.PORT || 8080;
-        app.listen(port, () => {
+        const server = app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
+        });
+
+        const io = require('./socket').init(server, {
+            cors: {
+                origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+                methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+                allowedHeaders: ['Content-Type', 'Authorization'],
+                credentials: true
+            }
+        });
+
+        io.on('connection', (socket) => {
+            console.log('New client connected');
+
+            socket.on('disconnect', (reason) => {
+                console.log('Client disconnected:', reason);
+            });
         });
     } catch (err) {
         console.log(err);

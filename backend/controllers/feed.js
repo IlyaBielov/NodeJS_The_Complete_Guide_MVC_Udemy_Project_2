@@ -5,14 +5,17 @@ const { validationResult } = require('express-validator');
 const Post = require('../models/post');
 const User = require('../models/user');
 const { handleError } = require('../utils/errorHandler');
+const {getIO} = require("../socket");
 
 exports.getPosts = async (req, res, next) => {
     try {
         const currentPage = parseInt(req.query.page) || 1;
         const postsPerPage = 2;
 
-        const totalPosts = await Post.find().countDocuments();
+        const totalPosts = await Post.countDocuments();
         const posts = await Post.find()
+            .sort({ createdAt: -1 })
+            .populate('creator', 'name')
             .skip((currentPage - 1) * postsPerPage)
             .limit(postsPerPage);
 
@@ -75,6 +78,22 @@ exports.createPost = async (req, res, next) => {
         user.posts.push(post);
         await user.save();
 
+        getIO().emit('posts', {
+            action: 'create',
+            post: {
+                _id: post._id,
+                title: post.title,
+                content: post.content,
+                imageUrl: post.imageUrl,
+                creator: {
+                    _id: creator._id,
+                    name: creator.name,
+                },
+                createdAt: post.createdAt,
+                updatedAt: post.updatedAt,
+            },
+        })
+
         res.status(201).json({
             message: 'Post created successfully',
             post: post,
@@ -133,6 +152,25 @@ exports.updatePost = async (req, res, next) => {
         post.content = content;
         post.imageUrl = imageUrl;
         const result = await post.save();
+
+        try {
+            const creator = await User.findById(post.creator);
+            getIO().emit('posts', {
+                action: 'update',
+                post: {
+                    _id: result._id,
+                    title: result.title,
+                    content: result.content,
+                    imageUrl: result.imageUrl,
+                    creator: creator ? { _id: creator._id, name: creator.name } : { _id: post.creator, name: '' },
+                    createdAt: result.createdAt,
+                    updatedAt: result.updatedAt,
+                },
+            });
+        } catch (e) {
+            console.log('Socket emit update failed:', e.message);
+        }
+
         return res.status(200).json({
             message: 'Post updated successfully',
             post: result
@@ -165,6 +203,15 @@ exports.deletePost = async (req, res, next) => {
         const user = await User.findById(req.userId);
         user.posts.pull(postId);
         await user.save();
+
+        try {
+            getIO().emit('posts', {
+                action: 'delete',
+                postId: postId,
+            });
+        } catch (e) {
+            console.log('Socket emit delete failed:', e.message);
+        }
 
         return res.status(200).json({ message: 'Post deleted successfully' });
     } catch (err) {
