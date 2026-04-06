@@ -1,15 +1,27 @@
 require('dotenv').config({ quiet: true });
 const express = require('express');
-const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
+const fs = require('fs');
 const multer = require('multer');
-
-const feedRouter = require('./routes/feed');
-const authRouter = require('./routes/auth');
-const { errorMiddleware } = require('./utils/errorHandler');
+const { createHandler } = require('graphql-http/lib/use/express');
+const auth = require('./middleware/auth');
 
 const app = express();
+
+// CORS must be handled BEFORE any body parser or other middleware so that
+// preflight (OPTIONS) requests are short-circuited with 200 OK.
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    next();
+});
+
+app.use(auth);
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -28,22 +40,51 @@ const fileFilter = (req, file, cb) => {
     }
 }
 
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-})
+app.put('/post-image', (req, res, next) => {
+    if (!req.isAuth) {
+        const error = new Error('Not authenticated!');
+        error.statusCode = 401;
+        return next(error);
+    }
+    if (!req.file) {
+        return res.status(200).json({ message: 'No file provided.' });
+    }
+    if (req.body.oldPath) {
+        clearImage(req.body.oldPath);
+    }
+    return res.status(201).json({ message: 'File stored.', filePath: req.file.path });
+});
 
-app.use('/auth', authRouter);
-app.use('/feed', feedRouter);
+const clearImage = filePath => {
+    const fullPath = path.join(__dirname, filePath);
+    const imagesDir = path.join(__dirname, 'images');
+    if (!fullPath.startsWith(imagesDir)) {
+        return;
+    }
+    fs.unlink(fullPath, err => {
+        if (err) console.log(err);
+    });
+};
 
-// Use the new comprehensive error middleware
-app.use(errorMiddleware);
+app.all(
+    '/graphql',
+    createHandler({
+        schema: require('./graphql/schema'),
+        context: (req) => ({ request: req.raw }),
+        formatError: (error) => {
+            if (!error.originalError) {
+                return error;
+            }
+            const data = error.originalError.data;
+            const message = error.message || 'An error occurred.';
+            const code = error.originalError.code || 500;
+            return { message, status: code, data };
+        }
+    }));
 
 async function start() {
     try {
@@ -51,25 +92,8 @@ async function start() {
         console.log('Connected to MongoDB');
 
         const port = process.env.PORT || 8080;
-        const server = app.listen(port, () => {
+        app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
-        });
-
-        const io = require('./socket').init(server, {
-            cors: {
-                origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
-                methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-                allowedHeaders: ['Content-Type', 'Authorization'],
-                credentials: true
-            }
-        });
-
-        io.on('connection', (socket) => {
-            console.log('New client connected');
-
-            socket.on('disconnect', (reason) => {
-                console.log('Client disconnected:', reason);
-            });
         });
     } catch (err) {
         console.log(err);

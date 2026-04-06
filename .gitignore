@@ -28,6 +28,10 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# Uploaded images
+backend/images/*
+!backend/images/.gitkeep
+
 # Build output
 dist/
 build/
